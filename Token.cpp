@@ -14,6 +14,7 @@ std::vector<Token>::size_type TokenTable::saveToken(TokenType typeTemp, TokenVal
 }
 
 void TokenTable::printToken() {
+    std::cout<<std::endl<<"[Token Table]"<<std::endl;
     for (auto iter = tokens.begin(); iter < tokens.end(); ++iter) {
         if ((*iter).type == TOKEN_IDENTIFIER) {
             std::cout << "(" << "ID" << "\t, " << (*iter).value.indexIdentifier << "\t)" << std::endl;

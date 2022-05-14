@@ -37,6 +37,7 @@ void LexicalAnalyzer::createSymbolTable() {
     //当前节点指针指向头节点
     symbolTableTail = symbolTableHead;
     symbolTableTemp = symbolTableTail;
+    std::cout << "Create symbol table successfully!" << std::endl;
 }
 
 //新增符号表项
@@ -69,8 +70,10 @@ int LexicalAnalyzer::findSymbolTableItem(const std::string &symbol) {
 bool LexicalAnalyzer::openInputCode(const std::string &fileName) {
     inputCode.open(fileName);
     if (inputCode) {
+        std::cout << "Open Source Successfully!" << std::endl;
         return true;
     } else {
+        std::cout << "Open Source Failed." << std::endl;
         return false;
     }
 }
@@ -78,8 +81,10 @@ bool LexicalAnalyzer::openInputCode(const std::string &fileName) {
 bool LexicalAnalyzer::openOutputSymbolTable(const std::string &fileName) {
     outputSymbolTable.open(fileName);
     if (outputSymbolTable) {
+        std::cout << "Open Symbol Table File Successfully!" << std::endl;
         return true;
     } else {
+        std::cout << "Open Symbol Table File Failed." << std::endl;
         return false;
     }
 }
@@ -87,8 +92,10 @@ bool LexicalAnalyzer::openOutputSymbolTable(const std::string &fileName) {
 bool LexicalAnalyzer::openOutputToken(const std::string &fileName) {
     outputToken.open(fileName);
     if (outputToken) {
+        std::cout << "Open Token File Successfully!" << std::endl;
         return true;
     } else {
+        std::cout << "Open Token File Failed." << std::endl;
         return false;
     }
 }
@@ -96,8 +103,10 @@ bool LexicalAnalyzer::openOutputToken(const std::string &fileName) {
 bool LexicalAnalyzer::openOutputLexemes(const std::string &fileName) {
     outputLexemes.open(fileName);
     if (outputLexemes) {
+        std::cout << "Open Lexemes File Successfully!" << std::endl;
         return true;
     } else {
+        std::cout << "Open Lexemes File Failed." << std::endl;
         return false;
     }
 }
@@ -129,7 +138,7 @@ void LexicalAnalyzer::closeOutputLexemes() {
 //自动机
 int LexicalAnalyzer::FA() {
     if (!inputCode) {
-        std::cout << "Source is not open." << std::endl;
+        std::cout << "Source is not Open." << std::endl;
         return -1;
     }
     lineCurrent = 0;//初始行号为0
@@ -200,7 +209,7 @@ int LexicalAnalyzer::FA() {
                                 memset(lineCharStr, 0x00, sizeof(char) * 256);
                                 break;
                             default:
-                                std::cout << "Error at lineCurrent " << lineCurrent << std::endl;
+                                std::cout << "Error at Line " << lineCurrent << std::endl;
                                 exit(-1);
                         }
                     }
@@ -246,7 +255,7 @@ int LexicalAnalyzer::FA() {
                             stateFA = 11;
                             break;
                         default:
-                            std::cout << "Error at lineCurrent " << lineCurrent << std::endl;
+                            std::cout << "Error at Line " << lineCurrent << std::endl;
                             lexemeBegin = lexemeForward;
                             stateFA = 0;//TODO 这里为啥这样写
                     }
@@ -395,6 +404,7 @@ int LexicalAnalyzer::FA() {
 }
 
 void LexicalAnalyzer::printSymbolTable() {
+    std::cout<<std::endl<<"[Symbol Table]"<<std::endl;
     SymbolTableItem *p = symbolTableHead;
     while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
         p = p->next;

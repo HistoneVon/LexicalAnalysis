@@ -29,6 +29,7 @@ unsigned int Lexemes::findLexeme(const std::string &lexemeTemp) {
 
 //打印字符串表
 void Lexemes::printLexemes() {
+    std::cout<<std::endl<<"[Lexemes Table]"<<std::endl;
     for (auto iter = lexeme.begin(); iter < lexeme.end(); ++iter) {
         std::cout << "(" << *iter << "\t, " << (*iter).length() << "\t)" << std::endl;
     }
