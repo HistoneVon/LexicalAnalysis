@@ -398,8 +398,7 @@ void LexicalAnalyzer::printSymbolTable() {
     SymbolTableItem *p = symbolTableHead;
     while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
         p = p->next;
-        std::cout << "(" << p->getName() << "\t, " << p->getType() << "\t, " << p->getKind() << "\t, " << p->getVal()
-                  << "\t, " << p->getAddress() << "\t)" << std::endl;
+        p->printSymbolTableItem();
     }
 }
 
