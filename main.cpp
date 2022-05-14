@@ -13,12 +13,12 @@ int main() {
     //创建符号表
     lexicalAnalyzer.createSymbolTable();
     //自动机
-//    lexicalAnalyzer.FA();
-//    //打印结果
+    lexicalAnalyzer.FA();
+    //打印结果
 //    lexicalAnalyzer.printSymbolTable();
 //    lexicalAnalyzer.lexemesTable.printLexemes();
 //    lexicalAnalyzer.tokenTable.printToken();
-//    //关文件
-//    lexicalAnalyzer.closeInputCode();
+    //关文件
+    lexicalAnalyzer.closeInputCode();
     return 0;
 }

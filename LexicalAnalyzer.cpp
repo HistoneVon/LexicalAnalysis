@@ -114,24 +114,28 @@ bool LexicalAnalyzer::openOutputLexemes(const std::string &fileName) {
 void LexicalAnalyzer::closeInputCode() {
     if (inputCode.is_open()) {
         inputCode.close();
+        std::cout << "Close Source Successfully!" << std::endl;
     }
 }
 
 void LexicalAnalyzer::closeOutputSymbolTable() {
     if (outputSymbolTable.is_open()) {
         outputSymbolTable.close();
+        std::cout << "Close Symbol Table File Successfully!" << std::endl;
     }
 }
 
 void LexicalAnalyzer::closeOutputToken() {
     if (outputToken.is_open()) {
         outputToken.close();
+        std::cout << "Close Token File Successfully!" << std::endl;
     }
 }
 
 void LexicalAnalyzer::closeOutputLexemes() {
     if (outputLexemes.is_open()) {
         outputLexemes.close();
+        std::cout << "Close Lexemes File Successfully!" << std::endl;
     }
 }
 
@@ -145,6 +149,7 @@ int LexicalAnalyzer::FA() {
     //读文件循环
     while (getline(inputCode, lineString)) {
         strcpy(lineCharStr, lineString.c_str());
+        std::cout << "[Get Line](" << lineCurrent << "): " << lineString << std::endl;
         lineCurrent++;
         lexemeBegin = 0;
         lexemeForward = 0;
@@ -404,7 +409,7 @@ int LexicalAnalyzer::FA() {
 }
 
 void LexicalAnalyzer::printSymbolTable() {
-    std::cout<<std::endl<<"[Symbol Table]"<<std::endl;
+    std::cout << std::endl << "[Symbol Table]" << std::endl;
     SymbolTableItem *p = symbolTableHead;
     while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
         p = p->next;
