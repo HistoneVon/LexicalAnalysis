@@ -7,13 +7,6 @@
 #ifndef LEXICALANALYSIS_KEYWORDS_H
 #define LEXICALANALYSIS_KEYWORDS_H
 
-char keywords[6][8] = {
-        "if",
-        "else",
-        "while",
-        "do",
-        "int",
-        "float"
-};//关键字集合
+extern char keywords[6][8];
 
 #endif //LEXICALANALYSIS_KEYWORDS_H

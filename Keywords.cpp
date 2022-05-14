@@ -4,5 +4,11 @@
  * @date 2022/5/14 11:40
  */
 
-//#include "Keywords.h"
-
+char keywords[6][8] = {
+        "if",
+        "else",
+        "while",
+        "do",
+        "int",
+        "float"
+};//关键字集合
