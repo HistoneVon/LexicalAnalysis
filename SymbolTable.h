@@ -7,6 +7,8 @@
 #ifndef LEXICALANALYSIS_SYMBOLTABLE_H
 #define LEXICALANALYSIS_SYMBOLTABLE_H
 
+#include <iostream>
+
 /*符号表节点*/
 class SymbolTableItem {
 private:

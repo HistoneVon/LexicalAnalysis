@@ -5,8 +5,6 @@
  */
 
 #include "LexemesTable.h"
-#include <vector>
-#include <iostream>
 
 //向字符串表中存储词素并返回词素在动态数组的下标
 std::vector<std::string>::size_type Lexemes::saveLexeme(const std::string &lexemeString) {

@@ -6,7 +6,7 @@
 
 #include "Utils.h"
 
-bool isDigit(char c) {
+bool isDigits(char c) {
     return c >= '0' && c <= '9';
 }
 

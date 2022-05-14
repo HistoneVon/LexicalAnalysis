@@ -5,7 +5,6 @@
  */
 
 #include "SymbolTable.h"
-#include <iostream>
 
 SymbolTableItem::SymbolTableItem(unsigned int nameTemp) {
     name = nameTemp;

@@ -8,7 +8,7 @@
 #define LEXICALANALYSIS_UTILS_H
 
 //判断是否是数字
-bool isDigit(char c);
+bool isDigits(char c);
 
 //判断是否是字母
 bool isLetter_(char c);

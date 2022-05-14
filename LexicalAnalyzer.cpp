@@ -4,15 +4,19 @@
  * @date 2022/5/9 23:49
  */
 
-#include "LexemesTable.h"
 #include "LexicalAnalyzer.h"
-#include <iostream>
 
 //Constructor
-//LexicalAnalyzer::LexicalAnalyzer() {}
+LexicalAnalyzer::LexicalAnalyzer() {
+    memset(lineCharStr, 0x00, sizeof(char) * 256);
+    SymbolTableLength = 0;
+}
 
 //Destructor
 LexicalAnalyzer::~LexicalAnalyzer() {
+    if (inputCode.is_open()) {
+        inputCode.close();
+    }
     if (outputSymbolTable.is_open()) {
         outputSymbolTable.close();
     }
@@ -97,6 +101,309 @@ bool LexicalAnalyzer::openOutputLexemes(const std::string &fileName) {
         return false;
     }
 }
+
+void LexicalAnalyzer::closeInputCode() {
+    if (inputCode.is_open()) {
+        inputCode.close();
+    }
+}
+
+void LexicalAnalyzer::closeOutputSymbolTable() {
+    if (outputSymbolTable.is_open()) {
+        outputSymbolTable.close();
+    }
+}
+
+void LexicalAnalyzer::closeOutputToken() {
+    if (outputToken.is_open()) {
+        outputToken.close();
+    }
+}
+
+void LexicalAnalyzer::closeOutputLexemes() {
+    if (outputLexemes.is_open()) {
+        outputLexemes.close();
+    }
+}
+
+//自动机
+int LexicalAnalyzer::FA() {
+    if (!inputCode) {
+        std::cout << "Source is not open." << std::endl;
+        return -1;
+    }
+    lineCurrent = 0;//初始行号为0
+    //读文件循环
+    while (getline(inputCode, lineString)) {
+        strcpy(lineCharStr, lineString.c_str());
+        lineCurrent++;
+        lexemeBegin = 0;
+        lexemeForward = 0;
+        stateFA = 0;
+        //自动机循环
+        while (true) {
+            switch (stateFA) {
+                //开始状态
+                case 0:
+                    forward_c = lineCharStr[lexemeForward];
+                    //排除空字符循环
+                    while (forward_c == ' ' || forward_c == '\t') {
+                        lexemeForward++;
+                        lexemeBegin++;
+                        forward_c = lineCharStr[lexemeForward];
+                    }
+                    //Digit
+                    if (isDigits(forward_c)) {
+                        stateFA = 20;//进入判断数字的状态
+                    } else if (isLetter_(forward_c)) {
+                        stateFA = 22;//进入判断字母下划线的状态
+                    } else {
+                        switch (forward_c) {
+                            case '<':
+                                stateFA = 1;
+                                break;
+                            case '=':
+                                stateFA = 4;
+                                break;
+                            case '>':
+                                stateFA = 7;
+                                break;
+                            case '!':
+                                stateFA = 10;
+                                break;
+                            case '+':
+                                stateFA = 12;
+                                break;
+                            case '-':
+                                stateFA = 13;
+                                break;
+                            case '*':
+                                stateFA = 14;
+                                break;
+                            case '/':
+                                stateFA = 15;
+                                break;
+                            case '(':
+                                stateFA = 16;
+                                break;
+                            case ')':
+                                stateFA = 17;
+                                break;
+                            case ';':
+                                stateFA = 18;
+                                break;
+                            case '\'':
+                                stateFA = 19;
+                                break;
+                            case '\0':
+                                stateFA = 100;//读到每行结尾则清空行缓冲区
+                                memset(lineCharStr, 0x00, sizeof(char) * 256);
+                                break;
+                            default:
+                                std::cout << "Error at lineCurrent " << lineCurrent << std::endl;
+                                exit(-1);
+                        }
+                    }
+                    break;
+                case 1://输入了<
+                    lexemeForward++;
+                    forward_c = lineCharStr[lexemeForward];
+                    switch (forward_c) {
+                        case '=':
+                            stateFA = 2;
+                            break;
+                        default:
+                            stateFA = 3;
+                    }
+                    break;
+                case 4://输入了=
+                    lexemeForward++;
+                    forward_c = lineCharStr[lexemeForward];
+                    switch (forward_c) {
+                        case '=':
+                            stateFA = 5;
+                            break;
+                        default:
+                            stateFA = 6;
+                    }
+                    break;
+                case 7://输入了>
+                    lexemeForward++;
+                    forward_c = lineCharStr[lexemeForward];
+                    switch (forward_c) {
+                        case '=':
+                            stateFA = 8;
+                            break;
+                        default:
+                            stateFA = 9;
+                    }
+                    break;
+                case 10://输入了!
+                    lexemeForward++;
+                    forward_c = lineCharStr[lexemeForward];
+                    switch (forward_c) {
+                        case '=':
+                            stateFA = 11;
+                            break;
+                        default:
+                            std::cout << "Error at lineCurrent " << lineCurrent << std::endl;
+                            lexemeBegin = lexemeForward;
+                            stateFA = 0;//TODO 这里为啥这样写
+                    }
+                    break;
+                    /*运算符*/
+                case 3://识别<
+                case 9://识别>
+                    lexemeForward--; //先回退一步
+                case 2://识别<=
+                case 5://识别==
+                case 8://识别>=
+                case 11://识别!=
+                case 12://识别 +
+                case 13://识别 -
+                case 14://识别 *
+                case 15://识别 /
+                {
+                    //存token
+                    TokenValue tokenValueTemp;
+                    memset(tokenValueTemp.valOperator, 0x00, sizeof(char) * 4);
+                    for (int i = 0; i <= lexemeForward - lexemeBegin; ++i) {
+                        tokenValueTemp.valOperator[i] = lineCharStr[lexemeBegin + i];
+                    }
+                    lexemeForward++;
+                    tokenValueTemp.valOperator[lexemeForward - lexemeBegin] = '\0';
+                    tokenTable.saveToken(TOKEN_OPERATOR, tokenValueTemp);
+                    //恢复初态
+                    stateFA = 0;
+                    lexemeBegin = lexemeForward;
+                    break;
+                }
+                    /*界限符*/
+                case 6://识别=
+                    lexemeForward--; //先回退一步
+                case 16://识别 (
+                case 17://识别 )
+                case 18://识别 ;
+                case 19://识别 '
+                {
+                    //存token
+                    TokenValue tokenValueTemp;
+                    memset(tokenValueTemp.valSeparator, 0x00, sizeof(char) * 4);
+                    for (int i = 0; i <= lexemeForward - lexemeBegin; ++i) {
+                        tokenValueTemp.valSeparator[i] = lineCharStr[lexemeBegin + i];
+                    }
+                    lexemeForward++;
+                    tokenValueTemp.valSeparator[lexemeForward - lexemeBegin] = '\0';
+                    tokenTable.saveToken(TOKEN_SEPARATOR, tokenValueTemp);
+                    //恢复初态
+                    stateFA = 0;
+                    lexemeBegin = lexemeForward;
+                    break;
+                }
+                    /*数字循环*/
+                case 20:
+                    while (isDigits(forward_c)) {//循环直至不是数字
+                        lexemeForward++;
+                        forward_c = lineCharStr[lexemeForward];
+                    }
+                    stateFA = 21;
+                    break;
+                    /*数字常量识别*/
+                case 21: {
+                    lexemeForward--;//数字 指针回退
+                    //存token
+                    TokenValue tokenValueTemp;
+                    char valIntegerTemp[16];
+                    memset(valIntegerTemp, 0x00, sizeof(char) * 16);
+                    for (int i = 0; i <= lexemeForward - lexemeBegin; ++i) {
+                        valIntegerTemp[i] = lineCharStr[lexemeBegin + i];
+                    }
+                    lexemeForward++;
+                    valIntegerTemp[lexemeForward - lexemeBegin] = '\0';//数字字符
+                    char *strPtr;//其余字符
+                    tokenValueTemp.valInteger = int(strtol(valIntegerTemp, &strPtr, 10));
+                    if (*strPtr != '\0') {//如果余下字符不是\0开头则
+                        std::cout << "Error in integer at " << lineCurrent << std::endl;
+                        exit(-1);
+                    }
+                    tokenTable.saveToken(TOKEN_INT, tokenValueTemp);
+                    //恢复初态
+                    stateFA = 0;
+                    lexemeBegin = lexemeForward;
+                    break;
+                }
+                    /*字母循环*/
+                case 22:
+                    while (isLetter_(forward_c)) {//循环直至不是数字
+                        lexemeForward++;
+                        forward_c = lineCharStr[lexemeForward];
+                    }
+                    stateFA = 23;
+                    break;
+                    /*字母下划线识别*/
+                case 23: {
+                    lexemeForward--;
+                    //存token
+                    TokenValue tokenValueTemp;
+                    char valLetterTemp[256];
+                    memset(valLetterTemp, 0x00, sizeof(char) * 256);
+                    for (int i = 0; i <= lexemeForward - lexemeBegin; ++i) {
+                        valLetterTemp[i] = lineCharStr[lexemeBegin + i];
+                    }
+                    lexemeForward++;
+                    valLetterTemp[lexemeForward - lexemeBegin] = '\0';
+                    /*关键字识别*/
+                    isKeyword = false;
+                    for (int i = 0; i < 6; ++i) {
+                        if (strcmp(valLetterTemp, keywords[i]) == 0) {//是关键字
+                            isKeyword = true;
+                            tokenValueTemp.indexKeyword = i;//是关键字在关键字表中的下标
+                            tokenTable.saveToken(TOKEN_KEYWORD, tokenValueTemp);
+                        }
+                    }
+                    /*标识符识别*/
+                    std::string valLetterTempString = valLetterTemp;
+                    if (!isKeyword) {
+                        int indexFind = findSymbolTableItem(valLetterTempString);
+                        if (indexFind < 0) {
+                            //向字符串表中存
+                            unsigned int indexLexeme = lexemesTable.saveLexeme(valLetterTempString);
+                            //创建符号表节点
+                            SymbolTableItem newSymbol(indexLexeme);
+                            //向符号表插入节点
+                            addSymbolTableItem(&newSymbol);
+                            //符号表长度+1
+                            SymbolTableLength++;
+                        }
+                    }
+                    //恢复初态
+                    stateFA = 0;
+                    lexemeBegin = lexemeForward;
+                    break;
+                }
+//                case 100:
+//                    stateFA = 100;
+//                    break;
+//                default:
+//                    stateFA = 100;
+            }
+            if (stateFA == 100)
+                break;
+        }
+    }
+    return 0;
+}
+
+void LexicalAnalyzer::printSymbolTable() {
+    SymbolTableItem *p = symbolTableHead;
+    while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
+        p = p->next;
+        std::cout << "(" << p->getName() << "\t, " << p->getType() << "\t, " << p->getKind() << "\t, " << p->getVal()
+                  << "\t, " << p->getAddress() << "\t)" << std::endl;
+    }
+}
+
+
 
 
 
