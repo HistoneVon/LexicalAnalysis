@@ -14,6 +14,10 @@
 #include "Keywords.h"
 #include <fstream>
 #include <iostream>
+#include <cstring>
+
+//char keywords[6][8] = {"if", "else", "while", "do", "int", "float"};//关键字集合
+//char keywords[][8] = {"if", "else", "while", "do", "int", "float"};
 
 class LexicalAnalyzer {
 private:
