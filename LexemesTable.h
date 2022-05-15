@@ -30,7 +30,7 @@ public:
     std::string getLexemeByIndex(int index);
 
     //返回某个词素的下标，不存在则返回-2（-1为头节点词素）
-    unsigned int findLexeme(const std::string &lexemeTemp);
+    int findLexeme(const std::string &lexemeTemp);
 
     //打印字符串表
     void printLexemes();

@@ -15,9 +15,9 @@ int main() {
     //自动机
     lexicalAnalyzer.FA();
     //打印结果
-//    lexicalAnalyzer.printSymbolTable();
-//    lexicalAnalyzer.lexemesTable.printLexemes();
-//    lexicalAnalyzer.tokenTable.printToken();
+    lexicalAnalyzer.printSymbolTable();
+    lexicalAnalyzer.lexemesTable.printLexemes();
+    lexicalAnalyzer.tokenTable.printToken();
     //关文件
     lexicalAnalyzer.closeInputCode();
     return 0;

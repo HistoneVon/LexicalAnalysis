@@ -26,16 +26,12 @@ LexicalAnalyzer::~LexicalAnalyzer() {
     if (outputLexemes.is_open()) {
         outputLexemes.close();
     }
-    SymbolTableItem *p = symbolTableHead;
-    while (p != nullptr) {
-        SymbolTableItem *pTemp = p;
-        p = p->next;
-        if (p!= nullptr){
-            delete pTemp;
-        }
+    while (symbolTableHead != nullptr) {
+        SymbolTableItem *p = symbolTableHead;
+        symbolTableHead = symbolTableHead->next;
+        delete p;
     }
-    symbolTableHead = nullptr;
-    std::cout << "Delete symbol table successfully!" << std::endl;
+    std::cout << "Delete Symbol Table Successfully!" << std::endl;
 }
 
 //创建符号表
@@ -47,26 +43,28 @@ void LexicalAnalyzer::createSymbolTable() {
     //当前节点指针指向头节点
     symbolTableTail = symbolTableHead;
     symbolTableTemp = symbolTableTail;
-    std::cout << "Create symbol table successfully!" << std::endl;
+    std::cout << "Create Symbol Table Successfully!" << std::endl;
 }
 
-//新增符号表项
-void LexicalAnalyzer::addSymbolTableItem(SymbolTableItem *newItem) {
+//新增符号表项（返回下标）
+int LexicalAnalyzer::addSymbolTableItem(SymbolTableItem *newItem) {
     symbolTableTail->next = newItem;
-    symbolTableTail = symbolTableTemp->next;
+    symbolTableTail = symbolTableTail->next;
     symbolTableTail->next = nullptr;
     symbolTableTemp = symbolTableTail;
     //符号表长度+1
     SymbolTableLength += 1;
+    return SymbolTableLength - 1;
 }
 
 //返回标识符在符号表中的位置或者即将插入的位置的相反数
 int LexicalAnalyzer::findSymbolTableItem(const std::string &symbol) {
-    unsigned int nameIndex = lexemesTable.findLexeme(symbol);
+    int nameIndex = lexemesTable.findLexeme(symbol);
+    std::cout << "[LEXEME](find): " << nameIndex << std::endl;
     if (nameIndex >= 0) {//如果词素表中查到了该词素
         int pos = 0;//第一个有内容的节点为0
         SymbolTableItem *p = symbolTableHead;
-        while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
+        while (p->next != nullptr) {//如果下一节点不是nullptr（本节点不是尾）
             p = p->next;
             if (nameIndex == p->getName()) {//比对符号表name字段与查出来的标识符在字符串表中的索引
                 return pos;//如果相等则返回该符号表位置，该位置是标识符在符号表中的位置
@@ -176,6 +174,7 @@ int LexicalAnalyzer::FA() {
                         lexemeForward++;
                         lexemeBegin++;
                         forward_c = lineCharStr[lexemeForward];
+                        std::cout << "[State](0) real forward_c: " << forward_c << std::endl;
                     }
                     //Digit
                     if (isDigits(forward_c)) {
@@ -223,6 +222,7 @@ int LexicalAnalyzer::FA() {
                             case '\0':
                                 stateFA = 100;//读到每行结尾则清空行缓冲区
                                 memset(lineCharStr, 0x00, sizeof(char) * 256);
+                                std::cout << "[State](0): " << "Return" << std::endl;
                                 break;
                             default:
                                 std::cout << "[Error]Error at Line " << lineCurrent << std::endl;
@@ -294,6 +294,7 @@ int LexicalAnalyzer::FA() {
                 case 15://识别 /
                 {
                     std::cout << "[State](*): " << "OPERATOR" << std::endl;
+                    std::cout << "[State](*): " << lineCharStr[lexemeForward] << std::endl;
                     //存token
                     TokenValue tokenValueTemp;
                     memset(tokenValueTemp.valOperator, 0x00, sizeof(char) * 4);
@@ -302,6 +303,7 @@ int LexicalAnalyzer::FA() {
                     }
                     lexemeForward++;
                     tokenValueTemp.valOperator[lexemeForward - lexemeBegin] = '\0';
+                    std::cout << "[OPERATOR]: " << tokenValueTemp.valOperator << std::endl;
                     tokenTable.saveToken(TOKEN_OPERATOR, tokenValueTemp);
                     //恢复初态
                     stateFA = 0;
@@ -317,6 +319,7 @@ int LexicalAnalyzer::FA() {
                 case 19://识别 '
                 {
                     std::cout << "[State](*): " << "SEPARATOR" << std::endl;
+                    std::cout << "[State](*): " << lineCharStr[lexemeForward] << std::endl;
                     //存token
                     TokenValue tokenValueTemp;
                     memset(tokenValueTemp.valSeparator, 0x00, sizeof(char) * 4);
@@ -325,6 +328,7 @@ int LexicalAnalyzer::FA() {
                     }
                     lexemeForward++;
                     tokenValueTemp.valSeparator[lexemeForward - lexemeBegin] = '\0';
+                    std::cout << "[SEPARATOR]: " << tokenValueTemp.valSeparator << std::endl;
                     tokenTable.saveToken(TOKEN_SEPARATOR, tokenValueTemp);
                     //恢复初态
                     stateFA = 0;
@@ -344,6 +348,7 @@ int LexicalAnalyzer::FA() {
                 case 21: {
                     std::cout << "[State](*): " << "INTEGER" << std::endl;
                     lexemeForward--;//数字 指针回退
+                    std::cout << "[State](21): " << lineCharStr[lexemeForward] << std::endl;
                     //存token
                     TokenValue tokenValueTemp;
                     char valIntegerTemp[16];
@@ -359,6 +364,7 @@ int LexicalAnalyzer::FA() {
                         std::cout << "[Error]Error in integer at " << lineCurrent << std::endl;
                         exit(-1);
                     }
+                    std::cout << "[INTEGER]: " << tokenValueTemp.valInteger << std::endl;
                     tokenTable.saveToken(TOKEN_INT, tokenValueTemp);
                     //恢复初态
                     stateFA = 0;
@@ -370,7 +376,7 @@ int LexicalAnalyzer::FA() {
                     while (isLetter_(forward_c)) {//循环直至不是数字
                         lexemeForward++;
                         forward_c = lineCharStr[lexemeForward];
-                        std::cout << "[State](21): " << forward_c << std::endl;
+                        std::cout << "[State](22): " << forward_c << std::endl;
                     }
                     stateFA = 23;
                     break;
@@ -378,6 +384,7 @@ int LexicalAnalyzer::FA() {
                 case 23: {
                     std::cout << "[State](*): " << "LETTER_" << std::endl;
                     lexemeForward--;
+                    std::cout << "[State](23): " << lineCharStr[lexemeForward] << std::endl;
                     //存token
                     TokenValue tokenValueTemp;
                     char valLetterTemp[256];
@@ -385,7 +392,7 @@ int LexicalAnalyzer::FA() {
                     for (int i = 0; i <= lexemeForward - lexemeBegin; ++i) {
                         valLetterTemp[i] = lineCharStr[lexemeBegin + i];
                     }
-                    lexemeForward++;
+                    lexemeForward++;//为了添加\0也为下一次循环重置指针
                     valLetterTemp[lexemeForward - lexemeBegin] = '\0';
                     /*关键字识别*/
                     isKeyword = false;
@@ -393,6 +400,7 @@ int LexicalAnalyzer::FA() {
                         if (strcmp(valLetterTemp, keywords[i]) == 0) {//是关键字
                             isKeyword = true;
                             tokenValueTemp.indexKeyword = i;//是关键字在关键字表中的下标
+                            std::cout << "[KEYWORD]: " << valLetterTemp << tokenValueTemp.indexKeyword << std::endl;
                             tokenTable.saveToken(TOKEN_KEYWORD, tokenValueTemp);
                         }
                     }
@@ -405,16 +413,24 @@ int LexicalAnalyzer::FA() {
                     std::string valLetterTempString = valLetterTemp;
                     if (!isKeyword) {
                         int indexFind = findSymbolTableItem(valLetterTempString);
+                        std::cout << "[SYMBOL](find): " << valLetterTempString << " " << indexFind << std::endl;
                         if (indexFind < 0) {
                             //向字符串表中存
                             unsigned int indexLexeme = lexemesTable.saveLexeme(valLetterTempString);
+                            std::cout << "[LEXEME](add): " << indexLexeme << std::endl;
+                            std::cout << "[LEXEME](length): " << indexLexeme + 1 << std::endl;
                             //创建符号表节点
-                            SymbolTableItem newSymbol(indexLexeme);
+                            auto *newSymbol = new SymbolTableItem(indexLexeme);
                             //向符号表插入节点
-                            addSymbolTableItem(&newSymbol);
+                            indexFind = addSymbolTableItem(newSymbol);
                             //符号表长度+1
-                            SymbolTableLength++;
+                            //SymbolTableLength++;//已在增加链表中处理
+                            std::cout << "[SYMBOL](add): " << newSymbol->getName() << std::endl;
+                            std::cout << "[SYMBOL](length): " << SymbolTableLength << std::endl;
                         }
+                        tokenValueTemp.indexIdentifier = indexFind;//标识符在符号表中的下标
+                        std::cout << "[IDENTIFIER]: " << valLetterTemp << tokenValueTemp.indexIdentifier << std::endl;
+                        tokenTable.saveToken(TOKEN_IDENTIFIER, tokenValueTemp);
                     }
                     //恢复初态
                     stateFA = 0;

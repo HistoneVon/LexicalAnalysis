@@ -18,19 +18,20 @@ std::string Lexemes::getLexemeByIndex(int index) {
 }
 
 //返回某个词素的下标，不存在则返回-2（-1为头节点词素）
-unsigned int Lexemes::findLexeme(const std::string &lexemeTemp) {
+int Lexemes::findLexeme(const std::string &lexemeTemp) {
     auto iter = std::find(lexeme.begin(), lexeme.end(), lexemeTemp);
     if (iter == lexeme.end()) {
         return -2;
     } else {
-        return &*iter - &lexeme[0];//下标计算
+        return int(&*iter - &lexeme[0]);//下标计算
     }
 }
 
 //打印字符串表
 void Lexemes::printLexemes() {
-    std::cout<<std::endl<<"[Lexemes Table]"<<std::endl;
+    std::cout << std::endl << "[Lexemes Table]" << std::endl;
     for (auto iter = lexeme.begin(); iter < lexeme.end(); ++iter) {
-        std::cout << "(" << *iter << "\t, " << (*iter).length() << "\t)" << std::endl;
+        std::cout << "(" << *iter << "\t, " << (*iter).length() << "  " << int(&*iter - &lexeme[0]) << "\t)"
+                  << std::endl;
     }
 }

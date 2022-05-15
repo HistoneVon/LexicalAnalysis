@@ -17,15 +17,15 @@ void TokenTable::printToken() {
     std::cout<<std::endl<<"[Token Table]"<<std::endl;
     for (auto iter = tokens.begin(); iter < tokens.end(); ++iter) {
         if ((*iter).type == TOKEN_IDENTIFIER) {
-            std::cout << "(" << "ID" << "\t, " << (*iter).value.indexIdentifier << "\t)" << std::endl;
+            std::cout << "(" << "ID " << "\t, " << (*iter).value.indexIdentifier << ")" << std::endl;
         } else if ((*iter).type == TOKEN_KEYWORD) {
-            std::cout << "(" << "KEY" << "\t, " << (*iter).value.indexKeyword << "\t)" << std::endl;
+            std::cout << "(" << "KEY" << "\t, " << (*iter).value.indexKeyword << ")" << std::endl;
         } else if ((*iter).type == TOKEN_INT) {
-            std::cout << "(" << "INT" << "\t, " << (*iter).value.valInteger << "\t)" << std::endl;
+            std::cout << "(" << "INT" << "\t, " << (*iter).value.valInteger << ")" << std::endl;
         } else if ((*iter).type == TOKEN_OPERATOR) {
-            std::cout << "(" << "OP" << "\t, " << (*iter).value.valOperator << "\t)" << std::endl;
+            std::cout << "(" << "OP " << "\t, " << (*iter).value.valOperator << ")" << std::endl;
         } else if ((*iter).type == TOKEN_SEPARATOR) {
-            std::cout << "(" << "SEP" << "\t, " << (*iter).value.valSeparator << "\t)" << std::endl;
+            std::cout << "(" << "SEP" << "\t, " << (*iter).value.valSeparator << ")" << std::endl;
         }
     }
 }

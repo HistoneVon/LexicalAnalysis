@@ -73,8 +73,8 @@ public:
     //创建符号表
     void createSymbolTable();
 
-    //新增符号表项
-    void addSymbolTableItem(SymbolTableItem *newItem);
+    //新增符号表项（返回下标）
+    int addSymbolTableItem(SymbolTableItem *newItem);
 
     //返回标识符在符号表中的位置或者即将插入的位置的相反数
     int findSymbolTableItem(const std::string &symbol);
