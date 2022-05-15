@@ -26,6 +26,16 @@ LexicalAnalyzer::~LexicalAnalyzer() {
     if (outputLexemes.is_open()) {
         outputLexemes.close();
     }
+    SymbolTableItem *p = symbolTableHead;
+    while (p != nullptr) {
+        SymbolTableItem *pTemp = p;
+        p = p->next;
+        if (p!= nullptr){
+            delete pTemp;
+        }
+    }
+    symbolTableHead = nullptr;
+    std::cout << "Delete symbol table successfully!" << std::endl;
 }
 
 //创建符号表
@@ -160,6 +170,7 @@ int LexicalAnalyzer::FA() {
                 //开始状态
                 case 0:
                     forward_c = lineCharStr[lexemeForward];
+                    std::cout << "[State](0): " << forward_c << std::endl;
                     //排除空字符循环
                     while (forward_c == ' ' || forward_c == '\t') {
                         lexemeForward++;
@@ -214,7 +225,7 @@ int LexicalAnalyzer::FA() {
                                 memset(lineCharStr, 0x00, sizeof(char) * 256);
                                 break;
                             default:
-                                std::cout << "Error at Line " << lineCurrent << std::endl;
+                                std::cout << "[Error]Error at Line " << lineCurrent << std::endl;
                                 exit(-1);
                         }
                     }
@@ -222,6 +233,7 @@ int LexicalAnalyzer::FA() {
                 case 1://输入了<
                     lexemeForward++;
                     forward_c = lineCharStr[lexemeForward];
+                    std::cout << "[State](1): " << forward_c << std::endl;
                     switch (forward_c) {
                         case '=':
                             stateFA = 2;
@@ -233,6 +245,7 @@ int LexicalAnalyzer::FA() {
                 case 4://输入了=
                     lexemeForward++;
                     forward_c = lineCharStr[lexemeForward];
+                    std::cout << "[State](4): " << forward_c << std::endl;
                     switch (forward_c) {
                         case '=':
                             stateFA = 5;
@@ -244,6 +257,7 @@ int LexicalAnalyzer::FA() {
                 case 7://输入了>
                     lexemeForward++;
                     forward_c = lineCharStr[lexemeForward];
+                    std::cout << "[State](7): " << forward_c << std::endl;
                     switch (forward_c) {
                         case '=':
                             stateFA = 8;
@@ -255,12 +269,13 @@ int LexicalAnalyzer::FA() {
                 case 10://输入了!
                     lexemeForward++;
                     forward_c = lineCharStr[lexemeForward];
+                    std::cout << "[State](10): " << forward_c << std::endl;
                     switch (forward_c) {
                         case '=':
                             stateFA = 11;
                             break;
                         default:
-                            std::cout << "Error at Line " << lineCurrent << std::endl;
+                            std::cout << "[Error]Error at Line " << lineCurrent << std::endl;
                             lexemeBegin = lexemeForward;
                             stateFA = 0;//TODO 这里为啥这样写
                     }
@@ -278,6 +293,7 @@ int LexicalAnalyzer::FA() {
                 case 14://识别 *
                 case 15://识别 /
                 {
+                    std::cout << "[State](*): " << "OPERATOR" << std::endl;
                     //存token
                     TokenValue tokenValueTemp;
                     memset(tokenValueTemp.valOperator, 0x00, sizeof(char) * 4);
@@ -300,6 +316,7 @@ int LexicalAnalyzer::FA() {
                 case 18://识别 ;
                 case 19://识别 '
                 {
+                    std::cout << "[State](*): " << "SEPARATOR" << std::endl;
                     //存token
                     TokenValue tokenValueTemp;
                     memset(tokenValueTemp.valSeparator, 0x00, sizeof(char) * 4);
@@ -319,11 +336,13 @@ int LexicalAnalyzer::FA() {
                     while (isDigits(forward_c)) {//循环直至不是数字
                         lexemeForward++;
                         forward_c = lineCharStr[lexemeForward];
+                        std::cout << "[State](20): " << forward_c << std::endl;
                     }
                     stateFA = 21;
                     break;
                     /*数字常量识别*/
                 case 21: {
+                    std::cout << "[State](*): " << "INTEGER" << std::endl;
                     lexemeForward--;//数字 指针回退
                     //存token
                     TokenValue tokenValueTemp;
@@ -337,7 +356,7 @@ int LexicalAnalyzer::FA() {
                     char *strPtr;//其余字符
                     tokenValueTemp.valInteger = int(strtol(valIntegerTemp, &strPtr, 10));
                     if (*strPtr != '\0') {//如果余下字符不是\0开头则
-                        std::cout << "Error in integer at " << lineCurrent << std::endl;
+                        std::cout << "[Error]Error in integer at " << lineCurrent << std::endl;
                         exit(-1);
                     }
                     tokenTable.saveToken(TOKEN_INT, tokenValueTemp);
@@ -351,11 +370,13 @@ int LexicalAnalyzer::FA() {
                     while (isLetter_(forward_c)) {//循环直至不是数字
                         lexemeForward++;
                         forward_c = lineCharStr[lexemeForward];
+                        std::cout << "[State](21): " << forward_c << std::endl;
                     }
                     stateFA = 23;
                     break;
                     /*字母下划线识别*/
                 case 23: {
+                    std::cout << "[State](*): " << "LETTER_" << std::endl;
                     lexemeForward--;
                     //存token
                     TokenValue tokenValueTemp;
@@ -374,6 +395,11 @@ int LexicalAnalyzer::FA() {
                             tokenValueTemp.indexKeyword = i;//是关键字在关键字表中的下标
                             tokenTable.saveToken(TOKEN_KEYWORD, tokenValueTemp);
                         }
+                    }
+                    if (isKeyword) {
+                        std::cout << "[Letter_](*): " << "KEYWORD" << std::endl;
+                    } else {
+                        std::cout << "[Letter_](*): " << "IDENTIFIER" << std::endl;
                     }
                     /*标识符识别*/
                     std::string valLetterTempString = valLetterTemp;
