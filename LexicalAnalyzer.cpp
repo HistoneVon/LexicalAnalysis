@@ -225,7 +225,8 @@ int LexicalAnalyzer::FA() {
                                 std::cout << "[State](0): " << "Return" << std::endl;
                                 break;
                             default:
-                                std::cout << "[Error]Error at Line " << lineCurrent << std::endl;
+                                std::cout << "[Error]:Error at Line " << lineCurrent << " : " << lineCharStr
+                                          << std::endl;
                                 exit(-1);
                         }
                     }
@@ -275,7 +276,7 @@ int LexicalAnalyzer::FA() {
                             stateFA = 11;
                             break;
                         default:
-                            std::cout << "[Error]Error at Line " << lineCurrent << std::endl;
+                            std::cout << "[Error]:Error at Line " << lineCurrent << " : " << lineCharStr << std::endl;
                             lexemeBegin = lexemeForward;
                             stateFA = 0;//TODO 这里为啥这样写
                     }
@@ -361,7 +362,7 @@ int LexicalAnalyzer::FA() {
                     char *strPtr;//其余字符
                     tokenValueTemp.valInteger = int(strtol(valIntegerTemp, &strPtr, 10));
                     if (*strPtr != '\0') {//如果余下字符不是\0开头则
-                        std::cout << "[Error]Error in integer at " << lineCurrent << std::endl;
+                        std::cout << "[Error]:Error in integer at " << lineCurrent << " : " << lineCharStr << std::endl;
                         exit(-1);
                     }
                     std::cout << "[INTEGER]: " << tokenValueTemp.valInteger << std::endl;
