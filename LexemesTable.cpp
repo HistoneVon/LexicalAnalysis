@@ -35,3 +35,12 @@ void Lexemes::printLexemes() {
                   << std::endl;
     }
 }
+
+void Lexemes::outputLexemes(std::ofstream &file) const {
+    file << "[Lexemes Table]" << "," << "," << std::endl;
+    file << "LEXEME" << "," << "LENGTH" << "," << "INDEX" << std::endl;
+    for (auto iter = lexeme.begin(); iter < lexeme.end(); ++iter) {
+        file << *iter << "," << (*iter).length() << "," << int(&*iter - &lexeme[0]) << std::endl;
+    }
+    std::cout << "Output to Lexemes File Successfully!" << std::endl;
+}

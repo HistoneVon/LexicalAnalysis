@@ -41,6 +41,10 @@ void SymbolTableItem::printSymbolTableItem() const {
               << std::endl;
 }
 
+void SymbolTableItem::outputSymbolTableItem(std::ofstream &file) const {
+    file << name << "," << type << "," << kind << "," << val << "," << address << std::endl;
+}
+
 //SymbolTableItem::SymbolTableItem(int nameTemp, int addressTemp) {
 //
 //}

@@ -69,6 +69,12 @@ public:
 
     void closeOutputLexemes();
 
+    void outputSymbolTableToFile();
+
+    void outputTokenToFile();
+
+    void outputLexemesToFile();
+
     /*符号表操作*/
     //创建符号表
     void createSymbolTable();

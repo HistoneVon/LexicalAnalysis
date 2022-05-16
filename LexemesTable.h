@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 class Lexemes {
 private:
@@ -34,6 +35,9 @@ public:
 
     //打印字符串表
     void printLexemes();
+
+    //导出字符串表
+    void outputLexemes(std::ofstream &file) const;
 };
 
 #endif //LEXICALANALYSIS_LEXEMESTABLE_H

@@ -1,15 +1,13 @@
 #include "LexicalAnalyzer.h"
-#include <iostream>
 
 int main() {
+    //实例化
     LexicalAnalyzer lexicalAnalyzer;
     //读源码
     bool inputCodeIsOpen = lexicalAnalyzer.openInputCode("src.txt");
     if (!inputCodeIsOpen) {
         return 0;
     }
-    //打开输出文件
-    //TODO 输出至文件
     //创建符号表
     lexicalAnalyzer.createSymbolTable();
     //自动机
@@ -18,7 +16,17 @@ int main() {
     lexicalAnalyzer.printSymbolTable();
     lexicalAnalyzer.lexemesTable.printLexemes();
     lexicalAnalyzer.tokenTable.printToken();
+    //输出至文件
+    lexicalAnalyzer.openOutputSymbolTable("SymbolTable.csv");
+    lexicalAnalyzer.outputSymbolTableToFile();
+    lexicalAnalyzer.openOutputToken("Tokens.csv");
+    lexicalAnalyzer.outputTokenToFile();
+    lexicalAnalyzer.openOutputLexemes("Lexemes.csv");
+    lexicalAnalyzer.outputLexemesToFile();
     //关文件
     lexicalAnalyzer.closeInputCode();
+    lexicalAnalyzer.closeOutputSymbolTable();
+    lexicalAnalyzer.closeOutputToken();
+    lexicalAnalyzer.closeOutputLexemes();
     return 0;
 }

@@ -119,6 +119,28 @@ bool LexicalAnalyzer::openOutputLexemes(const std::string &fileName) {
     }
 }
 
+
+void LexicalAnalyzer::outputSymbolTableToFile() {
+    outputSymbolTable << "[Symbol Table]" << std::endl;
+    outputSymbolTable << "INDEX IN LEXEMES" << "," << "TYPE" << "," << "KIND" << "," << "VALUE" << "," << "ADDRESS"
+                      << std::endl;
+    SymbolTableItem *p = symbolTableHead;
+    while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
+        p = p->next;
+        p->outputSymbolTableItem(outputSymbolTable);
+    }
+    std::cout << "Output to Symbol Table File Successfully!" << std::endl;
+}
+
+void LexicalAnalyzer::outputTokenToFile() {
+    tokenTable.outputToken(outputToken);
+}
+
+void LexicalAnalyzer::outputLexemesToFile() {
+    lexemesTable.outputLexemes(outputLexemes);
+}
+
+
 void LexicalAnalyzer::closeInputCode() {
     if (inputCode.is_open()) {
         inputCode.close();

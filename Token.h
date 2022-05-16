@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 enum TokenType {
     TOKEN_IDENTIFIER,   //标识符
@@ -48,6 +49,9 @@ public:
 
     //打印Token表
     void printToken();
+
+    //输出Token表
+    void outputToken(std::ofstream &file) const;
 };
 
 #endif //LEXICALANALYSIS_TOKEN_H

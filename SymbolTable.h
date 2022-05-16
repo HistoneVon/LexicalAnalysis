@@ -8,6 +8,7 @@
 #define LEXICALANALYSIS_SYMBOLTABLE_H
 
 #include <iostream>
+#include <fstream>
 
 /*符号表节点*/
 class SymbolTableItem {
@@ -35,6 +36,9 @@ public:
 
     //打印一行
     void printSymbolTableItem() const;
+
+    //输出一行至文件
+    void outputSymbolTableItem(std::ofstream& file) const;
 //    SymbolTableItem(int nameTemp,int addressTemp);
 };
 
