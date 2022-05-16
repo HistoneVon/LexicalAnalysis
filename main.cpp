@@ -1,10 +1,10 @@
 #include "LexicalAnalyzer.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     //实例化
     LexicalAnalyzer lexicalAnalyzer;
     //读源码
-    bool inputCodeIsOpen = lexicalAnalyzer.openInputCode("src.txt");
+    bool inputCodeIsOpen = lexicalAnalyzer.openInputCode(argv[1]);
     if (!inputCodeIsOpen) {
         return 0;
     }
