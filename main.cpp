@@ -1,9 +1,13 @@
 #include "LexicalAnalyzer.h"
 
 int main(int argc, char *argv[]) {
+    //读源码
+    if (!argv[1]) {
+        std::cout << "[Error]:No File Input." << std::endl;
+        return -1;
+    }
     //实例化
     LexicalAnalyzer lexicalAnalyzer;
-    //读源码
     bool inputCodeIsOpen = lexicalAnalyzer.openInputCode(argv[1]);
     if (!inputCodeIsOpen) {
         return 0;
