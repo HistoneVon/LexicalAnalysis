@@ -2,8 +2,8 @@
 
 int main(int argc, char *argv[]) {
     //读源码
-    if (!argv[1]) {
-        std::cout << "[Error]:No File Input." << std::endl;
+    if (argc != 2) {
+        std::cout << "[Error]:No File Input or Unexpected Parameters." << std::endl;
         return -1;
     }
     //实例化
