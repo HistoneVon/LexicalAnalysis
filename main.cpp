@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     LexicalAnalyzer lexicalAnalyzer;
     bool inputCodeIsOpen = lexicalAnalyzer.openInputCode(argv[1]);
     if (!inputCodeIsOpen) {
-        return 0;
+        return -1;
     }
     //创建符号表
     lexicalAnalyzer.createSymbolTable();
