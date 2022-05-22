@@ -1,4 +1,4 @@
-#include "LexicalAnalyzer.h"
+#include "Lexer.h"
 
 int main(int argc, char *argv[]) {
     //读源码
@@ -7,30 +7,30 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     //实例化
-    LexicalAnalyzer lexicalAnalyzer;
-    bool inputCodeIsOpen = lexicalAnalyzer.openInputCode(argv[1]);
+    Lexer lexer;
+    bool inputCodeIsOpen = lexer.openInputCode(argv[1]);
     if (!inputCodeIsOpen) {
         return -1;
     }
     //创建符号表
-    lexicalAnalyzer.createSymbolTable();
+    lexer.createSymbolTable();
     //自动机
-    lexicalAnalyzer.FA();
+    lexer.FA();
     //打印结果
-    lexicalAnalyzer.printSymbolTable();
-    lexicalAnalyzer.lexemesTable.printLexemes();
-    lexicalAnalyzer.tokenTable.printToken();
+    lexer.printSymbolTable();
+    lexer.lexemesTable.printLexemes();
+    lexer.tokenTable.printToken();
     //输出至文件
-    lexicalAnalyzer.openOutputSymbolTable("SymbolTable.csv");
-    lexicalAnalyzer.outputSymbolTableToFile();
-    lexicalAnalyzer.openOutputToken("Tokens.csv");
-    lexicalAnalyzer.outputTokenToFile();
-    lexicalAnalyzer.openOutputLexemes("Lexemes.csv");
-    lexicalAnalyzer.outputLexemesToFile();
+    lexer.openOutputSymbolTable("SymbolTable.csv");
+    lexer.outputSymbolTableToFile();
+    lexer.openOutputToken("Tokens.csv");
+    lexer.outputTokenToFile();
+    lexer.openOutputLexemes("Lexemes.csv");
+    lexer.outputLexemesToFile();
     //关文件
-    lexicalAnalyzer.closeInputCode();
-    lexicalAnalyzer.closeOutputSymbolTable();
-    lexicalAnalyzer.closeOutputToken();
-    lexicalAnalyzer.closeOutputLexemes();
+    lexer.closeInputCode();
+    lexer.closeOutputSymbolTable();
+    lexer.closeOutputToken();
+    lexer.closeOutputLexemes();
     return 0;
 }

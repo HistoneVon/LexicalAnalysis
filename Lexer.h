@@ -4,8 +4,8 @@
  * @date 2022/5/9 23:49
  */
 
-#ifndef LEXICALANALYSIS_LEXICALANALYZER_H
-#define LEXICALANALYSIS_LEXICALANALYZER_H
+#ifndef LEXICALANALYSIS_LEXER_H
+#define LEXICALANALYSIS_LEXER_H
 
 #include "SymbolTable.h"
 #include "LexemesTable.h"
@@ -19,7 +19,7 @@
 //char keywords[6][8] = {"if", "else", "while", "do", "int", "float"};//关键字集合
 //char keywords[][8] = {"if", "else", "while", "do", "int", "float"};
 
-class LexicalAnalyzer {
+class Lexer {
 private:
     /*符号表*/
     SymbolTableItem *symbolTableHead = nullptr;//头节点
@@ -47,10 +47,10 @@ public:
     TokenTable tokenTable;
 
     //Constructor
-    LexicalAnalyzer();
+    Lexer();
 
     //Destructor
-    ~LexicalAnalyzer();
+    ~Lexer();
 
     /*文件操作*/
     bool openInputCode(const std::string &fileName);
@@ -92,4 +92,4 @@ public:
     void printSymbolTable();
 };
 
-#endif //LEXICALANALYSIS_LEXICALANALYZER_H
+#endif //LEXICALANALYSIS_LEXER_H

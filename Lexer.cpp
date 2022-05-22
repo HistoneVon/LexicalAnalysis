@@ -4,16 +4,16 @@
  * @date 2022/5/9 23:49
  */
 
-#include "LexicalAnalyzer.h"
+#include "Lexer.h"
 
 //Constructor
-LexicalAnalyzer::LexicalAnalyzer() {
+Lexer::Lexer() {
     memset(lineCharStr, 0x00, sizeof(char) * 256);
     SymbolTableLength = 0;
 }
 
 //Destructor
-LexicalAnalyzer::~LexicalAnalyzer() {
+Lexer::~Lexer() {
     if (inputCode.is_open()) {
         inputCode.close();
     }
@@ -35,7 +35,7 @@ LexicalAnalyzer::~LexicalAnalyzer() {
 }
 
 //创建符号表
-void LexicalAnalyzer::createSymbolTable() {
+void Lexer::createSymbolTable() {
     //初始化符号表长度
     SymbolTableLength = 0;
     //创建头节点（头节点名称索引默认为-1）
@@ -47,7 +47,7 @@ void LexicalAnalyzer::createSymbolTable() {
 }
 
 //新增符号表项（返回下标）
-int LexicalAnalyzer::addSymbolTableItem(SymbolTableItem *newItem) {
+int Lexer::addSymbolTableItem(SymbolTableItem *newItem) {
     symbolTableTail->next = newItem;
     symbolTableTail = symbolTableTail->next;
     symbolTableTail->next = nullptr;
@@ -58,7 +58,7 @@ int LexicalAnalyzer::addSymbolTableItem(SymbolTableItem *newItem) {
 }
 
 //返回标识符在符号表中的位置或者即将插入的位置的相反数
-int LexicalAnalyzer::findSymbolTableItem(const std::string &symbol) {
+int Lexer::findSymbolTableItem(const std::string &symbol) {
     int nameIndex = lexemesTable.findLexeme(symbol);
     std::cout << "[LEXEME](find): " << nameIndex << std::endl;
     if (nameIndex >= 0) {//如果词素表中查到了该词素
@@ -75,7 +75,7 @@ int LexicalAnalyzer::findSymbolTableItem(const std::string &symbol) {
     return -1;//没查到返回-1
 }
 
-bool LexicalAnalyzer::openInputCode(const std::string &fileName) {
+bool Lexer::openInputCode(const std::string &fileName) {
     inputCode.open(fileName);
     if (inputCode) {
         std::cout << "Open Source Successfully!" << std::endl;
@@ -86,7 +86,7 @@ bool LexicalAnalyzer::openInputCode(const std::string &fileName) {
     }
 }
 
-bool LexicalAnalyzer::openOutputSymbolTable(const std::string &fileName) {
+bool Lexer::openOutputSymbolTable(const std::string &fileName) {
     outputSymbolTable.open(fileName);
     if (outputSymbolTable) {
         std::cout << "Open Symbol Table File Successfully!" << std::endl;
@@ -97,7 +97,7 @@ bool LexicalAnalyzer::openOutputSymbolTable(const std::string &fileName) {
     }
 }
 
-bool LexicalAnalyzer::openOutputToken(const std::string &fileName) {
+bool Lexer::openOutputToken(const std::string &fileName) {
     outputToken.open(fileName);
     if (outputToken) {
         std::cout << "Open Token File Successfully!" << std::endl;
@@ -108,7 +108,7 @@ bool LexicalAnalyzer::openOutputToken(const std::string &fileName) {
     }
 }
 
-bool LexicalAnalyzer::openOutputLexemes(const std::string &fileName) {
+bool Lexer::openOutputLexemes(const std::string &fileName) {
     outputLexemes.open(fileName);
     if (outputLexemes) {
         std::cout << "Open Lexemes File Successfully!" << std::endl;
@@ -120,7 +120,7 @@ bool LexicalAnalyzer::openOutputLexemes(const std::string &fileName) {
 }
 
 
-void LexicalAnalyzer::outputSymbolTableToFile() {
+void Lexer::outputSymbolTableToFile() {
     outputSymbolTable << "[Symbol Table]" << std::endl;
     outputSymbolTable << "INDEX IN LEXEMES" << "," << "TYPE" << "," << "KIND" << "," << "VALUE" << "," << "ADDRESS"
                       << std::endl;
@@ -132,37 +132,37 @@ void LexicalAnalyzer::outputSymbolTableToFile() {
     std::cout << "Output to Symbol Table File Successfully!" << std::endl;
 }
 
-void LexicalAnalyzer::outputTokenToFile() {
+void Lexer::outputTokenToFile() {
     tokenTable.outputToken(outputToken);
 }
 
-void LexicalAnalyzer::outputLexemesToFile() {
+void Lexer::outputLexemesToFile() {
     lexemesTable.outputLexemes(outputLexemes);
 }
 
 
-void LexicalAnalyzer::closeInputCode() {
+void Lexer::closeInputCode() {
     if (inputCode.is_open()) {
         inputCode.close();
         std::cout << "Close Source Successfully!" << std::endl;
     }
 }
 
-void LexicalAnalyzer::closeOutputSymbolTable() {
+void Lexer::closeOutputSymbolTable() {
     if (outputSymbolTable.is_open()) {
         outputSymbolTable.close();
         std::cout << "Close Symbol Table File Successfully!" << std::endl;
     }
 }
 
-void LexicalAnalyzer::closeOutputToken() {
+void Lexer::closeOutputToken() {
     if (outputToken.is_open()) {
         outputToken.close();
         std::cout << "Close Token File Successfully!" << std::endl;
     }
 }
 
-void LexicalAnalyzer::closeOutputLexemes() {
+void Lexer::closeOutputLexemes() {
     if (outputLexemes.is_open()) {
         outputLexemes.close();
         std::cout << "Close Lexemes File Successfully!" << std::endl;
@@ -170,7 +170,7 @@ void LexicalAnalyzer::closeOutputLexemes() {
 }
 
 //自动机
-int LexicalAnalyzer::FA() {
+int Lexer::FA() {
     if (!inputCode) {
         std::cout << "Source is not Open." << std::endl;
         return -1;
@@ -473,7 +473,7 @@ int LexicalAnalyzer::FA() {
     return 0;
 }
 
-void LexicalAnalyzer::printSymbolTable() {
+void Lexer::printSymbolTable() {
     std::cout << std::endl << "[Symbol Table]" << std::endl;
     SymbolTableItem *p = symbolTableHead;
     while (p->next) {//如果下一节点不是nullptr（本节点不是尾）
