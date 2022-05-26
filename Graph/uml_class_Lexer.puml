@@ -26,7 +26,6 @@ class Lexer {
     +TokenTable tokenTable;
     +Lexer();//Constructor
     +~Lexer();//Destructor
-    /*文件操作*/
     +bool openInputCode(const std::string &fileName);
     +bool openOutputSymbolTable(const std::string &fileName);
     +bool openOutputToken(const std::string &fileName);
@@ -38,10 +37,9 @@ class Lexer {
     +void outputSymbolTableToFile();
     +void outputTokenToFile();
     +void outputLexemesToFile();
-    /*符号表操作*/
     +void createSymbolTable();//创建符号表
     +int addSymbolTableItem(SymbolTableItem *newItem);//新增符号表项（返回下标）
-    +int findSymbolTableItem(const std::string &symbol);//返回标识符在符号表中的位置或者即将插入的位置的相反数
+    +int findSymbolTableItem(const std::string &symbol);
     +int FA();//自动机
     +void printSymbolTable();//打印符号表
 }
