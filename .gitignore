@@ -1,5 +1,9 @@
 # CMake
+
 /cmake-build-debug/
+# ide
+/.idea/
+/.vscode/
 
 # from github/gitignore
 # Prerequisites
